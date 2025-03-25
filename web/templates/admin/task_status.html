@@ -1,0 +1,56 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <ul style="padding-left: 24px;">
+    <li><b>Task ID:</b> {{ task.id }}</li>
+    <li><b>Task Name:</b> {{ task.name }}</li>
+    <li><b>Task Args:</b> {{ task.args }}</li>
+    <li><b>Task Kwargs:</b> {{ task.kwargs }}</li>
+    <li><b>Task State:</b> {{ task.state }}</li>
+  </ul>
+  {% if task.state == "PENDING" or task.state == "STARTED" %}
+    <hr style="margin: 12px 0;">
+    <div>
+      <p>Task is running...</p>
+      {% include "admin/components/spinner.html" %}
+      <p>(Last update: <span id="lastUpdate"></span>)</p>
+    </div>
+    <script>
+      let intervalId = null;
+      const lastUpdateSpan = document.getElementById("lastUpdate");
+
+      async function fetchStatusAndUpdate() {
+        try {
+          console.log("Fetching task status...");
+
+          // Fetch task status from the server
+          const response = await fetch(`/admin/task-status/{{ task.id }}/`, {
+            headers: { Accept: "application/json" }
+          });
+          const data = await response.json();
+
+          if (data["state"] === "SUCCESS" || data["state"] === "FAILURE") {
+            // Stop with the polling
+            if (intervalId) {
+              clearInterval(intervalId);
+            }
+
+            // If 'redirect_url' is present redirect to that URL
+            if (data["kwargs"] && data["kwargs"]["redirect_url"]) {
+              window.location.href = data["kwargs"]["redirect_url"];
+            }
+          }
+
+          // Update the 'lastUpdate' span
+          lastUpdateSpan.innerHTML = new Date().toLocaleTimeString();
+        } catch (error) {
+          console.error("Error fetching task status:", error);
+        }
+      }
+
+      // Instantly check the status and then poll every 3 seconds
+      intervalId = setInterval(fetchStatusAndUpdate, 3000);
+      fetchStatusAndUpdate();
+    </script>
+  {% endif %}
+{% endblock %}
