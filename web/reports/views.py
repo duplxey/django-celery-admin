@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from reports.models import Report
 
 
-def generate_report(request):
+def generate_report_view(request):
     report = Report.objects.create()
 
     # Simulate a long-running report generation
