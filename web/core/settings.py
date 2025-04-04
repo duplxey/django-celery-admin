@@ -32,7 +32,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 # Application definition
 
 INSTALLED_APPS = [
-    "core.apps.CustomAdminConfig",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -100,15 +100,6 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
-
-# Celery
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html
-
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
-CELERY_TASK_TRACK_STARTED = True
-CELERY_RESULT_EXTENDED = True
 
 
 # Internationalization

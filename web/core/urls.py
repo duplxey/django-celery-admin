@@ -18,6 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+import reports.views
+
 urlpatterns = [
+    path("generate-report/", reports.views.generate_report, name="generate_report"),
     path("admin/", admin.site.urls),
 ]
